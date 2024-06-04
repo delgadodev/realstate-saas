@@ -15,7 +15,7 @@ export default function LoginForm() {
       const resp = await signIn("google");
 
       if (resp?.ok) {
-        router.replace("/dashboard");
+        router.push("/dashboard");
       }
     } catch (e) {
       console.error(e);

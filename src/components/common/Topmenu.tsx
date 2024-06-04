@@ -4,6 +4,7 @@ import clsx from "clsx";
 import { CiSearch, CiMenuBurger, CiChat1, CiBellOn } from "react-icons/ci";
 import { IoCloseOutline, IoSearchOutline } from "react-icons/io5";
 import Link from "next/link";
+import { signOut } from "next-auth/react";
 
 interface Props {
   links: {
@@ -62,28 +63,29 @@ export const TopMenu = ({ links }: Props) => {
             onClick={() => closeMenu()}
           />
 
-          {/* Input */}
-          <div className="relative mt-14">
-            <IoSearchOutline size={20} className="absolute top-2 left-2" />
-            <input
-              type="text"
-              placeholder="Buscar"
-              className="w-full bg-gray-50 rounded pl-10 py-1 pr-10 border-b-2 text-xl border-gray-200 focus:outline-none focus:border-blue-500"
-            />
-          </div>
+          <h2 className="text-2xl font-bold">Realstate</h2>
 
           {/* Menú */}
 
-          <nav>
+          <div className="flex flex-col justify-between h-full">
             <ul className="mt-14 space-y-4">
               {links.map((item) => (
                 <div key={item.href} className="flex gap-2 items-center">
                   {item.icon}
-                  <Link href={item.href}>{item.name}</Link>
+                  <Link onClick={closeMenu} href={item.href}>{item.name}</Link>
                 </div>
               ))}
             </ul>
-          </nav>
+
+            <div className="mb-10">
+              <button
+                className="bg-blue-300 text-white p-2 rounded-md shadow"
+                onClick={() => signOut()}
+              >
+                Cerrar sesión
+              </button>
+            </div>
+          </div>
         </nav>
       </div>
     </>

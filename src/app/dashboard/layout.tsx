@@ -24,12 +24,14 @@ export default async function DashboradLayout({
     { name: "Mi perfil", href: "/dashboard/profile", icon: <FaPerson /> },
   ];
 
+  console.log(resp?.data);
+
   return (
     <>
       <Sidebar
         links={links}
         data={
-          resp.data as {
+          resp?.data as {
             avatar: string | null;
             created_at: string | null;
             email: string;
