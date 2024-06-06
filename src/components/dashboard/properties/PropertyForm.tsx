@@ -24,6 +24,18 @@ import { createUpdateProperty } from "@/actions/properties/create-update-propert
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { deletePropertyImage } from "@/actions/properties/delete-image";
+import { useState } from "react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 interface Props {
   property: Partial<Property>;
@@ -70,6 +82,7 @@ export default function PropertyForm({ property, title, images }: Props) {
   });
 
   const router = useRouter();
+  const [createdUpdated, setCreatedUpdated] = useState(false);
 
   const onSubmit = async (data: FormInputs) => {
     const formData = new FormData();
@@ -106,167 +119,190 @@ export default function PropertyForm({ property, title, images }: Props) {
       return;
     }
 
-    router.replace("/dashboard");
+    setCreatedUpdated(true);
   };
 
-  return (
-    <div className="flex justify-center">
-      <Card className="w-full max-w-2xl">
-        <CardHeader>
-          <CardTitle>{title}</CardTitle>
-          <CardDescription>
-            Rellena el formulario para enlistar tu propiedad
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit(onSubmit)} className="grid gap-4">
-            <div className="grid sm:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="title">Titulo</Label>
-                <Input
-                  id="title"
-                  placeholder="Ingresa un titulo"
-                  {...register("title", { required: true })}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="description">Descripcion</Label>
-                <Textarea
-                  id="description"
-                  placeholder="Describe your property"
-                  {...register("description", { required: true })}
-                />
-              </div>
-            </div>
-            <div className="grid sm:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="price">Precio</Label>
-                <Input
-                  id="price"
-                  type="number"
-                  placeholder="Enter the price"
-                  {...register("price", { required: true })}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="address">Direccion</Label>
-                <Input
-                  id="address"
-                  placeholder="Enter the address"
-                  {...register("address", { required: true })}
-                />
-              </div>
-            </div>
-            <div className="grid sm:grid-cols-3 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="city">Ciudad</Label>
-                <Input
-                  id="city"
-                  placeholder="Enter the city"
-                  {...register("city", { required: true })}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="state">Localidad</Label>
-                <Input
-                  id="state"
-                  placeholder="Enter the state"
-                  {...register("state", { required: true })}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="postalCode">Codigo Postal</Label>
-                <Input
-                  id="postalCode"
-                  placeholder="Enter the postal code"
-                  {...register("postal_code", { required: true })}
-                />
-              </div>
-            </div>
-            <div className="grid sm:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="type">Tipo de transaccion</Label>
-                <Select
-                  onValueChange={(value) => {
-                    setValue("type", value);
-                  }}
-                  defaultValue={property.type ?? ""}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selecciona el tipo de transaccion" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="venta">Venta</SelectItem>
-                    <SelectItem value="alquiler">Alquiler</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="home-type">Tipo de inmueble</Label>
-                <Select
-                  onValueChange={(value) => {
-                    setValue("home_type", value);
-                  }}
-                  defaultValue={property.home_type ?? ""}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selecciona el tipo de inmueble" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="casa">Casa</SelectItem>
-                    <SelectItem value="departamento">Departamento</SelectItem>
-                    <SelectItem value="casaQuinta">Casa Quinta</SelectItem>
-                    <SelectItem value="oficinas">Oficinas</SelectItem>
-                    <SelectItem value="local">Local</SelectItem>
-                    <SelectItem value="estacionamiento">
-                      Estacionamiento
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="images">Images</Label>
-              <Input
-                id="images"
-                type="file"
-                multiple
-                {...register("images")}
-                accept="image/png, image/jpeg, image/jpg, image/webp, image/svg+xml, image/avif"
-              />
-            </div>
+  if (createdUpdated) {
+    setTimeout(() => {
+      router.push("/dashboard");
+    }, 700);
+  }
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              {images?.map((image) => (
-                <div key={image.id}>
-                  <Image
-                    src={image.url}
-                    width={200}
-                    height={200}
-                    alt={image?.id ?? ""}
-                    className="rounded-t-md shadow-md 
+  return (
+    <>
+      <AlertDialog open={createdUpdated}>
+        <AlertDialogTrigger asChild></AlertDialogTrigger>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              Propiedad guardada correctamente
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              La propiedad ha sido guardada correctamente, puedes verla en la
+              lista de propiedades
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <div className="flex justify-center">
+        <Card className="w-full max-w-2xl">
+          <CardHeader>
+            <CardTitle>{title}</CardTitle>
+            <CardDescription>
+              Rellena el formulario para enlistar tu propiedad
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSubmit(onSubmit)} className="grid gap-4">
+              <div className="grid sm:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="title">Titulo</Label>
+                  <Input
+                    id="title"
+                    placeholder="Ingresa un titulo"
+                    {...register("title", { required: true })}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="description">Descripcion</Label>
+                  <Textarea
+                    id="description"
+                    placeholder="Describe your property"
+                    {...register("description", { required: true })}
+                  />
+                </div>
+              </div>
+              <div className="grid sm:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="price">Precio</Label>
+                  <Input
+                    id="price"
+                    type="number"
+                    placeholder="Enter the price"
+                    {...register("price", { required: true })}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="address">Direccion</Label>
+                  <Input
+                    id="address"
+                    placeholder="Enter the address"
+                    {...register("address", { required: true })}
+                  />
+                </div>
+              </div>
+              <div className="grid sm:grid-cols-3 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="city">Ciudad</Label>
+                  <Input
+                    id="city"
+                    placeholder="Enter the city"
+                    {...register("city", { required: true })}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="state">Localidad</Label>
+                  <Input
+                    id="state"
+                    placeholder="Enter the state"
+                    {...register("state", { required: true })}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="postalCode">Codigo Postal</Label>
+                  <Input
+                    id="postalCode"
+                    placeholder="Enter the postal code"
+                    {...register("postal_code", { required: true })}
+                  />
+                </div>
+              </div>
+              <div className="grid sm:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="type">Tipo de transaccion</Label>
+                  <Select
+                    onValueChange={(value) => {
+                      setValue("type", value);
+                    }}
+                    defaultValue={property.type ?? ""}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecciona el tipo de transaccion" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="venta">Venta</SelectItem>
+                      <SelectItem value="alquiler">Alquiler</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="home-type">Tipo de inmueble</Label>
+                  <Select
+                    onValueChange={(value) => {
+                      setValue("home_type", value);
+                    }}
+                    defaultValue={property.home_type ?? ""}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecciona el tipo de inmueble" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="casa">Casa</SelectItem>
+                      <SelectItem value="departamento">Departamento</SelectItem>
+                      <SelectItem value="casaQuinta">Casa Quinta</SelectItem>
+                      <SelectItem value="oficinas">Oficinas</SelectItem>
+                      <SelectItem value="local">Local</SelectItem>
+                      <SelectItem value="estacionamiento">
+                        Estacionamiento
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="images">Images</Label>
+                <Input
+                  id="images"
+                  type="file"
+                  multiple
+                  {...register("images")}
+                  accept="image/png, image/jpeg, image/jpg, image/webp, image/svg+xml, image/avif"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                {images?.map((image) => (
+                  <div key={image.id}>
+                    <Image
+                      src={image.url}
+                      width={200}
+                      height={200}
+                      alt={image?.id ?? ""}
+                      className="rounded-t-md shadow-md 
                     object-cover w-full h-44
 
                     "
-                  />
-                  <button
-                    onClick={() => deletePropertyImage(image.url, image.id)}
-                    type="button"
-                    className="bg-red-500 p-2 text-white font-semibold w-full rounded-b-xl"
-                  >
-                    Eliminar
-                  </button>
-                </div>
-              ))}
-            </div>
-            <CardFooter>
-              <Button type="submit" className="ml-auto">
-                {title === "Nueva propiedad" ? "Crear" : "Actualizar"}
-              </Button>
-            </CardFooter>
-          </form>
-        </CardContent>
-      </Card>
-    </div>
+                    />
+                    <button
+                      onClick={() => deletePropertyImage(image.url, image.id)}
+                      type="button"
+                      className="bg-red-500 p-2 text-white font-semibold w-full rounded-b-xl"
+                    >
+                      Eliminar
+                    </button>
+                  </div>
+                ))}
+              </div>
+              <CardFooter>
+                <Button type="submit" className="ml-auto">
+                  {title === "Nueva propiedad" ? "Crear" : "Actualizar"}
+                </Button>
+              </CardFooter>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
+    </>
   );
 }

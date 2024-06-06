@@ -29,7 +29,7 @@ export const deletePropertyImage = async (
       return { ok: false, error: "Error al borrar imagen" };
     }
 
-    return { ok: true };
+    return { ok: true, deletedImage };
   } catch (e) {
     console.log(e);
     return { ok: false, error: "Error al borrar imagen" };

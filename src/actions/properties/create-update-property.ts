@@ -69,6 +69,9 @@ export const createUpdateProperty = async (formData: FormData) => {
       };
     }
 
+    revalidatePath("/dashboard&create=true");
+    revalidatePath(`/dashboard/properties/${data[0].slug}`);
+
     return {
       ok: true,
       data,
@@ -124,6 +127,9 @@ export const createUpdateProperty = async (formData: FormData) => {
       };
     }
 
+    revalidatePath("/dashboard&create=true");
+    revalidatePath(`/dashboard/properties/${data[0].slug}`);
+
     return {
       ok: true,
       data,
@@ -146,8 +152,9 @@ const checkImagesToUpload = async (formData: FormData, property_id: string) => {
     );
 
     await Promise.all(imagesPromises);
+
     revalidatePath("/dashboard");
-    
+
     return {
       ok: true,
       message: "Imagenes subidas correctamente",

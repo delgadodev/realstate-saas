@@ -11,6 +11,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Image, Property } from "@/lib/supabaseClient";
 import Link from "next/link";
+import { AlertDialoG } from "@/components/common/AlertDialog";
 
 type PropertyWithImages = Property & {
   images: Image[];
@@ -47,22 +48,15 @@ export default function PropertiesGrid({ properties }: Props) {
               <TableCell>{property.title}</TableCell>
               <TableCell>{property.price}</TableCell>
               <TableCell>{property.description}</TableCell>
-              <TableCell>{property.type}</TableCell>
+              <TableCell className="capitalize">{property.type}</TableCell>
               <TableCell className="flex gap-5 items-center justify-center ">
-                <Link
-                  className="text-blue-500 hover:underline "
-                  href={`/dashboard/properties/${property.slug}`}
-                >
-                  Editar
-                </Link>
-
-                <Button
-                  onClick={() => {
-                    // deleteProductImage(property.images[0].url, property.images[0].id);
-                  }}
-                >
-                  Eliminar
+                <Button>
+                  <Link href={`/dashboard/properties/${property.slug}`}>
+                    Editar
+                  </Link>
                 </Button>
+
+                <AlertDialoG propertyId={property.id} />
               </TableCell>
             </TableRow>
           ))}

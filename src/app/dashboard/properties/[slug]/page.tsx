@@ -1,7 +1,9 @@
+export const dynamic = "force-dynamic"
+
 import { getImagesFromId } from "@/actions/properties/get-images-from-id";
 import { getPropertyBySlug } from "@/actions/properties/get-property-by-slug";
 import PropertyForm from "@/components/dashboard/properties/PropertyForm";
-import { notFound, redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 
 interface Props {
   params: {

@@ -54,3 +54,27 @@ export const getUserId = async () => {
     console.log(e);
   }
 };
+
+export const getUserPlan = async () => {
+  try {
+    const session = await auth();
+
+    const resp = await supabase
+      .from("users")
+      .select()
+      .eq("email", session?.user?.email as string);
+
+    if (resp.error) {
+      return {
+        ok: false,
+        message: "Error obteniendo el usuario",
+      };
+    }
+    return {
+      ok: true,
+      plan: resp.data[0].role
+    };
+  } catch (e) {
+    console.log(e);
+  }
+};

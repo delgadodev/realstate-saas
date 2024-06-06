@@ -1,9 +1,13 @@
+export const dynamic = "force-dynamic"
+
 import { getPropertiesByUser } from "@/actions/properties/get-properties-by-user";
+import { getUserPlan } from "@/actions/user/get-user";
+import AddPropertyButton from "@/components/dashboard/properties/AddPropertyButton";
 import PropertiesGrid from "@/components/dashboard/properties/PropertiesGrid";
-import Link from "next/link";
 
 export default async function DashboardPage() {
   const prop = await getPropertiesByUser();
+  const userPlan = await getUserPlan();
 
   if (!prop?.ok) {
     return <div>Error obteniendo las propiedades</div>;
@@ -13,16 +17,13 @@ export default async function DashboardPage() {
     <div className="flex flex-col">
       <div className="flex justify-between items-center">
         <h1 className="text-4xl font-bold">Mis propiedades</h1>
-
-        <Link
-          className="bg-blue-500 p-2 text-white rounded"
-          href="/dashboard/properties/new"
-        >
-          Agregar propiedad
-        </Link>
+        <AddPropertyButton
+          propertiesLength={prop.properties?.length ?? 0}
+          userPlan={userPlan?.plan ?? ""}
+        />
       </div>
 
-      <PropertiesGrid properties={prop.properties || []} />
+      <PropertiesGrid properties={prop.properties ?? []} />
     </div>
   );
 }
