@@ -1,5 +1,10 @@
 import { auth } from "@/auth";
 
+export const metadata = {
+  title: "Dashboard | Perfil",
+  description: "Dashboard",
+};
+
 export default async function ProfilePage() {
   const session = await auth();
 

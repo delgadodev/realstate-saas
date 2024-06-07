@@ -52,7 +52,7 @@ export const Sidebar = ({ links, data }: Props) => {
 
         <div className="mt-8 text-center">
           <Image
-            src={data.avatar || ""}
+            src={data.avatar || "/default-img/defaultavatar.webp"}
             width={150}
             height={150}
             alt=""
@@ -74,10 +74,10 @@ export const Sidebar = ({ links, data }: Props) => {
       <div className="px-6 -mx-6 pt-4 flex justify-between items-center border-t">
         <button
           onClick={() => signOut()}
-          className="px-4 py-3 flex items-center space-x-4 rounded-md text-gray-600 group"
+          className="px-4 py-3 flex items-center space-x-4 rounded-md text-red-600 group"
         >
           <CiLogout />
-          <span className="group-hover:text-gray-700">Logout</span>
+          <span className="text-red-500">Cerrar sesion</span>
         </button>
       </div>
     </aside>

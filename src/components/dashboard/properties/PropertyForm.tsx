@@ -1,13 +1,5 @@
 "use client";
 import { Image as TypeImage, Property } from "@/lib/supabaseClient";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardContent,
-  CardFooter,
-} from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -22,20 +14,21 @@ import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
 import { createUpdateProperty } from "@/actions/properties/create-update-property";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
-import { deletePropertyImage } from "@/actions/properties/delete-image";
 import { useState } from "react";
 import {
   AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
-  AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import localidades from "@/localidades.json";
+import clsx from "clsx";
+import { Loader2 } from "lucide-react";
+import Link from "next/link";
+import { IoArrowBack } from "react-icons/io5";
+import CarouselImages from "./Carousel";
 
 interface Props {
   property: Partial<Property>;
@@ -83,6 +76,7 @@ export default function PropertyForm({ property, title, images }: Props) {
 
   const router = useRouter();
   const [createdUpdated, setCreatedUpdated] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const onSubmit = async (data: FormInputs) => {
     const formData = new FormData();
@@ -111,15 +105,21 @@ export default function PropertyForm({ property, title, images }: Props) {
         formData.append("images", images[i]);
       }
     }
+    setLoading(true);
+    try {
+      const { ok, data: updatedProperty } = await createUpdateProperty(
+        formData
+      );
 
-    const { ok, data: updatedProperty } = await createUpdateProperty(formData);
-
-    if (!ok) {
-      alert("Error al guardar la propiedad");
-      return;
+      if (!ok) {
+        alert("Error al guardar la propiedad");
+        return;
+      }
+      setLoading(false);
+      setCreatedUpdated(true);
+    } catch (e) {
+      console.error(e);
     }
-
-    setCreatedUpdated(true);
   };
 
   if (createdUpdated) {
@@ -145,19 +145,28 @@ export default function PropertyForm({ property, title, images }: Props) {
         </AlertDialogContent>
       </AlertDialog>
 
-      <div className="flex justify-center">
-        <Card className="w-full max-w-2xl">
-          <CardHeader>
-            <CardTitle>{title}</CardTitle>
-            <CardDescription>
+      <div className={clsx(createdUpdated && "hidden", "flex")}>
+        <div className="w-full">
+          <Link
+            href="/dashboard"
+            className="flex gap-2 items-center font-semibold"
+          >
+            <IoArrowBack size={25} />
+            Atras
+          </Link>
+          <div>
+            <h1 className="text-4xl font-bold mt-2 py-2">{title}</h1>
+            <p className="text-gray-500 mb-10">
               Rellena el formulario para enlistar tu propiedad
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
+            </p>
+          </div>
+          <div>
             <form onSubmit={handleSubmit(onSubmit)} className="grid gap-4">
               <div className="grid sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="title">Titulo</Label>
+                  <Label className="text-lg" htmlFor="title">
+                    Titulo
+                  </Label>
                   <Input
                     id="title"
                     placeholder="Ingresa un titulo"
@@ -165,7 +174,9 @@ export default function PropertyForm({ property, title, images }: Props) {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="description">Descripcion</Label>
+                  <Label className="text-lg" htmlFor="description">
+                    Descripcion
+                  </Label>
                   <Textarea
                     id="description"
                     placeholder="Describe your property"
@@ -175,7 +186,9 @@ export default function PropertyForm({ property, title, images }: Props) {
               </div>
               <div className="grid sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="price">Precio</Label>
+                  <Label className="text-lg" htmlFor="price">
+                    Precio
+                  </Label>
                   <Input
                     id="price"
                     type="number"
@@ -184,7 +197,9 @@ export default function PropertyForm({ property, title, images }: Props) {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="address">Direccion</Label>
+                  <Label className="text-lg" htmlFor="address">
+                    Direccion
+                  </Label>
                   <Input
                     id="address"
                     placeholder="Enter the address"
@@ -194,23 +209,53 @@ export default function PropertyForm({ property, title, images }: Props) {
               </div>
               <div className="grid sm:grid-cols-3 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="city">Ciudad</Label>
-                  <Input
-                    id="city"
-                    placeholder="Enter the city"
-                    {...register("city", { required: true })}
-                  />
+                  <Label className="text-lg" htmlFor="city">
+                    Departamento
+                  </Label>
+                  <Select
+                    onValueChange={(value) => {
+                      setValue("city", value);
+                    }}
+                    defaultValue={property.city ?? ""}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecciona el departamento" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {localidades.departamentos.map((departamento) => (
+                        <SelectItem key={departamento} value={departamento}>
+                          {departamento}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="state">Localidad</Label>
-                  <Input
-                    id="state"
-                    placeholder="Enter the state"
-                    {...register("state", { required: true })}
-                  />
+                  <Label className="text-lg" htmlFor="state">
+                    Localidad
+                  </Label>
+                  <Select
+                    onValueChange={(value) => {
+                      setValue("state", value);
+                    }}
+                    defaultValue={property.state ?? ""}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecciona la localidad" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {localidades.localidades.map((localidad) => (
+                        <SelectItem key={localidad} value={localidad}>
+                          {localidad}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="postalCode">Codigo Postal</Label>
+                  <Label className="text-lg" htmlFor="postalCode">
+                    Codigo Postal
+                  </Label>
                   <Input
                     id="postalCode"
                     placeholder="Enter the postal code"
@@ -220,7 +265,9 @@ export default function PropertyForm({ property, title, images }: Props) {
               </div>
               <div className="grid sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="type">Tipo de transaccion</Label>
+                  <Label className="text-lg" htmlFor="type">
+                    Tipo de transaccion
+                  </Label>
                   <Select
                     onValueChange={(value) => {
                       setValue("type", value);
@@ -237,7 +284,9 @@ export default function PropertyForm({ property, title, images }: Props) {
                   </Select>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="home-type">Tipo de inmueble</Label>
+                  <Label className="text-lg" htmlFor="home-type">
+                    Tipo de inmueble
+                  </Label>
                   <Select
                     onValueChange={(value) => {
                       setValue("home_type", value);
@@ -261,7 +310,9 @@ export default function PropertyForm({ property, title, images }: Props) {
                 </div>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="images">Images</Label>
+                <Label className="text-lg" htmlFor="images">
+                  Images
+                </Label>
                 <Input
                   id="images"
                   type="file"
@@ -271,37 +322,24 @@ export default function PropertyForm({ property, title, images }: Props) {
                 />
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                {images?.map((image) => (
-                  <div key={image.id}>
-                    <Image
-                      src={image.url}
-                      width={200}
-                      height={200}
-                      alt={image?.id ?? ""}
-                      className="rounded-t-md shadow-md 
-                    object-cover w-full h-44
-
-                    "
-                    />
-                    <button
-                      onClick={() => deletePropertyImage(image.url, image.id)}
-                      type="button"
-                      className="bg-red-500 p-2 text-white font-semibold w-full rounded-b-xl"
-                    >
-                      Eliminar
-                    </button>
-                  </div>
-                ))}
+              <div className="lg:w-[60%] h-[500px] p-12">
+                <CarouselImages images={images ?? []} />
               </div>
-              <CardFooter>
-                <Button type="submit" className="ml-auto">
-                  {title === "Nueva propiedad" ? "Crear" : "Actualizar"}
+              <div className="mt-24">
+                <Button
+                  disabled={loading}
+                  type="submit"
+                  className="
+                p-6
+                "
+                >
+                  {loading ? "Guardando" : "Guardar"}
+                  {loading && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
                 </Button>
-              </CardFooter>
+              </div>
             </form>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
     </>
   );

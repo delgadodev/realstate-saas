@@ -1,9 +1,14 @@
-export const dynamic = "force-dynamic"
+export const dynamic = "force-dynamic";
 
 import { getPropertiesByUser } from "@/actions/properties/get-properties-by-user";
 import { getUserPlan } from "@/actions/user/get-user";
 import AddPropertyButton from "@/components/dashboard/properties/AddPropertyButton";
 import PropertiesGrid from "@/components/dashboard/properties/PropertiesGrid";
+
+export const metadata = {
+  title: "Dashboard | Inicio",
+  description: "Dashboard",
+};
 
 export default async function DashboardPage() {
   const prop = await getPropertiesByUser();

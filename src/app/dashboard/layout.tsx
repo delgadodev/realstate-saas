@@ -5,7 +5,7 @@ import { TopMenu } from "@/components/common/Topmenu";
 import { redirect } from "next/navigation";
 import { IconType } from "react-icons";
 import { FaHome } from "react-icons/fa";
-import { Fa0, FaHouse, FaPerson } from "react-icons/fa6";
+import { Fa0, FaCreditCard, FaHouse, FaPerson } from "react-icons/fa6";
 
 export default async function DashboradLayout({
   children,
@@ -22,6 +22,11 @@ export default async function DashboradLayout({
   const links = [
     { name: "Inicio", href: "/dashboard", icon: <FaHouse /> },
     { name: "Mi perfil", href: "/dashboard/profile", icon: <FaPerson /> },
+    {
+      name: "Plan de suscripción",
+      href: "/dashboard/suscripcion",
+      icon: <FaCreditCard />,
+    },
   ];
 
   console.log(resp?.data);

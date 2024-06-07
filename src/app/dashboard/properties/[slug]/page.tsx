@@ -1,9 +1,14 @@
-export const dynamic = "force-dynamic"
+export const dynamic = "force-dynamic";
 
 import { getImagesFromId } from "@/actions/properties/get-images-from-id";
 import { getPropertyBySlug } from "@/actions/properties/get-property-by-slug";
 import PropertyForm from "@/components/dashboard/properties/PropertyForm";
 import { notFound } from "next/navigation";
+
+export const metadata = {
+  title: "Dashboard | Propiedad",
+  description: "Dashboard",
+};
 
 interface Props {
   params: {

@@ -17,7 +17,6 @@ interface Props {
 }
 
 export function AlertDialoG({ propertyId }: Props) {
-
   const handleDelete = async () => {
     try {
       await deleteProperty(propertyId);
@@ -43,7 +42,9 @@ export function AlertDialoG({ propertyId }: Props) {
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancelar</AlertDialogCancel>
-          <AlertDialogAction onClick={handleDelete}>Continuar</AlertDialogAction>
+          <AlertDialogAction onClick={handleDelete}>
+            Continuar
+          </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

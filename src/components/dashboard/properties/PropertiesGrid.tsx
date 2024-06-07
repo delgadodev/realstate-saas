@@ -9,12 +9,13 @@ import {
   TableCell,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Image, Property } from "@/lib/supabaseClient";
+import { Image as TypeImage, Property } from "@/lib/supabaseClient";
 import Link from "next/link";
 import { AlertDialoG } from "@/components/common/AlertDialog";
+import Image from "next/image";
 
 type PropertyWithImages = Property & {
-  images: Image[];
+  images: TypeImage[];
 };
 
 interface Props {
@@ -39,10 +40,14 @@ export default function PropertiesGrid({ properties }: Props) {
           {properties.map((property) => (
             <TableRow key={property.id}>
               <TableCell>
-                <img
-                  src={property.images[0]?.url}
+                <Image
+                  src={
+                    property.images[0]?.url || "/default-img/defaulthouse.jpg"
+                  }
+                  width={400}
+                  height={400}
                   alt={property.title}
-                  className="w-[80px] h-[80px] object-cover"
+                  className="w-full object-cover"
                 />
               </TableCell>
               <TableCell>{property.title}</TableCell>

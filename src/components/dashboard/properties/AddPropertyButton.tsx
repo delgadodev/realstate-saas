@@ -9,8 +9,8 @@ interface Props {
 }
 
 const plans: { [key: string]: number } = {
-  FREE: 1,
-  PREMIUM: 3,
+  FREE: 2,
+  PREMIUM: 5,
   INMOBILIRIA: 10000,
 };
 

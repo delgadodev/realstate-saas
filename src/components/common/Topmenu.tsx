@@ -23,7 +23,6 @@ export const TopMenu = ({ links }: Props) => {
     <>
       <div className="sticky z-10 top-0 h-16 border-b bg-white lg:py-2.5">
         <div className="px-6 flex items-center justify-between space-x-4">
-          <h2>Dashboard</h2>
           <div>
             <button
               onClick={openSideMenu}
@@ -72,7 +71,9 @@ export const TopMenu = ({ links }: Props) => {
               {links.map((item) => (
                 <div key={item.href} className="flex gap-2 items-center">
                   {item.icon}
-                  <Link onClick={closeMenu} href={item.href}>{item.name}</Link>
+                  <Link onClick={closeMenu} href={item.href}>
+                    {item.name}
+                  </Link>
                 </div>
               ))}
             </ul>
