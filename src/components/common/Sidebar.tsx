@@ -2,17 +2,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { CiLogout } from "react-icons/ci";
-
-import {
-  IoCalendarOutline,
-  IoCheckboxOutline,
-  IoListOutline,
-} from "react-icons/io5";
-import { SidebarItem } from "./SidebarItem";
-import { IconType } from "react-icons";
-import React from "react";
-import { User } from "@/lib/supabaseClient";
 import { signOut } from "next-auth/react";
+import { SidebarItem } from "./SidebarItem";
 
 interface Props {
   links: {

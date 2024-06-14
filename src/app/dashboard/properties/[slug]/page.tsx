@@ -16,7 +16,7 @@ interface Props {
   };
 }
 
-export default async function NewOrEditPropertiePage({ params }: Props) {
+export default async function NewOrEditPropertyPage({ params }: Props) {
   const { slug } = params;
 
   const property = await getPropertyBySlug(slug);

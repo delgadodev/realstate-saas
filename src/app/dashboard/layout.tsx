@@ -3,9 +3,8 @@ import { auth } from "@/auth";
 import { Sidebar } from "@/components/common/Sidebar";
 import { TopMenu } from "@/components/common/Topmenu";
 import { redirect } from "next/navigation";
-import { IconType } from "react-icons";
-import { FaHome } from "react-icons/fa";
-import { Fa0, FaCreditCard, FaHouse, FaPerson } from "react-icons/fa6";
+
+import { FaCreditCard, FaHouse, FaPerson } from "react-icons/fa6";
 
 export default async function DashboradLayout({
   children,
@@ -28,8 +27,6 @@ export default async function DashboradLayout({
       icon: <FaCreditCard />,
     },
   ];
-
-  console.log(resp?.data);
 
   return (
     <>

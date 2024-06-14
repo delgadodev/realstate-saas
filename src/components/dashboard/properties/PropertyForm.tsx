@@ -29,6 +29,8 @@ import { Loader2 } from "lucide-react";
 import Link from "next/link";
 import { IoArrowBack } from "react-icons/io5";
 import CarouselImages from "./Carousel";
+import { errorHandler } from "@/lib/errorHandler";
+import { slugify } from "@/lib/slugify";
 
 interface Props {
   property: Partial<Property>;
@@ -77,6 +79,7 @@ export default function PropertyForm({ property, title, images }: Props) {
   const router = useRouter();
   const [createdUpdated, setCreatedUpdated] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const onSubmit = async (data: FormInputs) => {
     const formData = new FormData();
@@ -95,10 +98,7 @@ export default function PropertyForm({ property, title, images }: Props) {
     formData.append("type", propertyToSave.type ?? "");
     formData.append("home_type", propertyToSave.home_type ?? "");
     formData.append("postal_code", propertyToSave.postal_code);
-    formData.append(
-      "slug",
-      propertyToSave.title.toLowerCase().replace(" ", "-")
-    );
+    formData.append("slug", slugify(propertyToSave.title));
 
     if (images) {
       for (let i = 0; i < images.length; i++) {
@@ -107,12 +107,20 @@ export default function PropertyForm({ property, title, images }: Props) {
     }
     setLoading(true);
     try {
-      const { ok, data: updatedProperty } = await createUpdateProperty(
-        formData
-      );
+      const {
+        ok,
+        data: updatedProperty,
+        error,
+      } = await createUpdateProperty(formData);
 
       if (!ok) {
-        alert("Error al guardar la propiedad");
+        setError(errorHandler(error as string));
+        setTimeout(() => {
+          setError(null);
+        }, 3000);
+
+        setLoading(false);
+
         return;
       }
       setLoading(false);
@@ -124,8 +132,8 @@ export default function PropertyForm({ property, title, images }: Props) {
 
   if (createdUpdated) {
     setTimeout(() => {
-      router.push("/dashboard");
-    }, 700);
+      router.replace("/dashboard");
+    }, 800);
   }
 
   return (
@@ -169,7 +177,8 @@ export default function PropertyForm({ property, title, images }: Props) {
                   </Label>
                   <Input
                     id="title"
-                    placeholder="Ingresa un titulo"
+                    placeholder="*Titulo de la propiedad"
+                    className=" "
                     {...register("title", { required: true })}
                   />
                 </div>
@@ -179,7 +188,7 @@ export default function PropertyForm({ property, title, images }: Props) {
                   </Label>
                   <Textarea
                     id="description"
-                    placeholder="Describe your property"
+                    placeholder="*Descripcion de la propiedad"
                     {...register("description", { required: true })}
                   />
                 </div>
@@ -188,11 +197,13 @@ export default function PropertyForm({ property, title, images }: Props) {
                 <div className="space-y-2">
                   <Label className="text-lg" htmlFor="price">
                     Precio
+                    <span className="text-xs ml-2 text-gray-500">
+                      (dejar en 0 para no mostrar)
+                    </span>
                   </Label>
                   <Input
                     id="price"
                     type="number"
-                    placeholder="Enter the price"
                     {...register("price", { required: true })}
                   />
                 </div>
@@ -202,7 +213,7 @@ export default function PropertyForm({ property, title, images }: Props) {
                   </Label>
                   <Input
                     id="address"
-                    placeholder="Enter the address"
+                    placeholder="*Direccion de la propiedad"
                     {...register("address", { required: true })}
                   />
                 </div>
@@ -258,7 +269,7 @@ export default function PropertyForm({ property, title, images }: Props) {
                   </Label>
                   <Input
                     id="postalCode"
-                    placeholder="Enter the postal code"
+                    placeholder="*Codigo postal de la propiedad"
                     {...register("postal_code", { required: true })}
                   />
                 </div>
@@ -322,9 +333,15 @@ export default function PropertyForm({ property, title, images }: Props) {
                 />
               </div>
 
-              <div className="lg:w-[60%] h-[500px] p-12">
-                <CarouselImages images={images ?? []} />
-              </div>
+              {images && images.length > 0 && (
+                <CarouselImages images={images} />
+              )}
+
+              {error && (
+                <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
+                  {error}
+                </div>
+              )}
               <div className="mt-24">
                 <Button
                   disabled={loading}

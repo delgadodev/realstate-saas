@@ -1,4 +1,7 @@
+import { getUserByEmail } from "@/actions/user/get-user";
 import { auth } from "@/auth";
+import { redirect } from "next/navigation";
+import ProfileForm from "./ui/ProfileForm";
 
 export const metadata = {
   title: "Dashboard | Perfil",
@@ -7,12 +10,12 @@ export const metadata = {
 
 export default async function ProfilePage() {
   const session = await auth();
-
-  console.log(session);
+  const resp = await getUserByEmail(session?.user?.email as string);
 
   return (
-    <div>
-      <h1>{JSON.stringify({ session })}</h1>
+    <div className="text-4xl font-bold">
+      <h1>Mi perfil</h1>
+      <ProfileForm user={resp?.data ?? undefined} />
     </div>
   );
 }

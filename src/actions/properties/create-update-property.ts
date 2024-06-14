@@ -5,6 +5,7 @@ import { supabase } from "@/lib/supabaseClient";
 import { z } from "zod";
 import { v2 as cloudinary } from "cloudinary";
 import { revalidatePath } from "next/cache";
+import { slugify } from "@/lib/slugify";
 
 cloudinary.config(process.env.CLOUDINARY_URL ?? "");
 
@@ -46,7 +47,7 @@ export const createUpdateProperty = async (formData: FormData) => {
       .from("properties")
       .update({
         ...rest,
-        slug: property.title.toLowerCase().replace(/ /g, "_").trim(),
+        slug: slugify(property.title),
       })
       .match({ id })
       .select();
@@ -55,7 +56,7 @@ export const createUpdateProperty = async (formData: FormData) => {
       console.log("error", resp.error.message);
       return {
         ok: false,
-        message: "Error al actualizar la propiedad",
+        error: resp.error.code,
       };
     }
     const { data } = resp;
@@ -69,7 +70,7 @@ export const createUpdateProperty = async (formData: FormData) => {
       };
     }
 
-    revalidatePath("/dashboard&create=true");
+    revalidatePath("/dashboard");
     revalidatePath(`/dashboard/properties/${data[0].slug}`);
 
     return {
@@ -103,7 +104,7 @@ export const createUpdateProperty = async (formData: FormData) => {
         state: property.state as string,
         title: property.title as string,
         type: property.type as string,
-        slug: property.title.toLowerCase().replace(/ /g, "_").trim(),
+        slug: slugify(property.title),
         user_id: user.data?.id,
       })
       .select();
@@ -112,7 +113,7 @@ export const createUpdateProperty = async (formData: FormData) => {
       console.log("error", resp.error.message);
       return {
         ok: false,
-        message: "Error al crear la propiedad",
+        error: resp.error.code,
       };
     }
 
@@ -127,7 +128,7 @@ export const createUpdateProperty = async (formData: FormData) => {
       };
     }
 
-    revalidatePath("/dashboard&create=true");
+    revalidatePath("/dashboard");
     revalidatePath(`/dashboard/properties/${data[0].slug}`);
 
     return {
