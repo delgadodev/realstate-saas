@@ -10,6 +10,8 @@ cloudinary.config(process.env.CLOUDINARY_URL ?? "");
 const profileSchema = z.object({
   name: z.string().min(3).max(155),
   description: z.string().min(3).max(900),
+  phone: z.string().min(3).max(20).optional(),
+  emailContact: z.string().email().optional(),
   image: z
     .instanceof(File)
     .refine((file) => file.type.startsWith("image/"), {
@@ -93,6 +95,8 @@ export const updateProfile = async (formData: FormData) => {
     const updateData = {
       username: profile.data.name,
       description: profile.data.description,
+      phone: profile.data.phone,
+      emailContact: profile.data.emailContact,
       avatar: userData.avatar,
     };
 
@@ -105,6 +109,8 @@ export const updateProfile = async (formData: FormData) => {
       .update({
         username: updateData.username,
         description: updateData.description,
+        phone: updateData.phone,
+        contact_email: updateData.emailContact,
         avatar: updateData.avatar,
       })
       .eq("email", session.user?.email as string);

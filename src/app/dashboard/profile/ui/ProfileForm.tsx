@@ -19,6 +19,8 @@ interface Props {
 interface FormInputs {
   name: string;
   description: string;
+  phone?: string;
+  emailContact?: string;
   image?: Blob;
 }
 
@@ -28,14 +30,15 @@ export default function ProfileForm({ user }: Props) {
   const {
     handleSubmit,
     register,
-    formState: { isValid },
+    formState: { isValid, errors },
     getValues,
     setValue,
-    watch,
   } = useForm<FormInputs>({
     defaultValues: {
       name: user?.username,
       description: user?.description || "",
+      phone: user?.phone || "",
+      emailContact: user?.contact_email || "",
       image: undefined,
     },
   });
@@ -51,6 +54,8 @@ export default function ProfileForm({ user }: Props) {
 
     formData.append("name", data.name);
     formData.append("description", data.description);
+    formData.append("phone", data.phone || "");
+    formData.append("emailContact", data.emailContact || "");
 
     try {
       const resp = await updateProfile(formData);
@@ -62,7 +67,7 @@ export default function ProfileForm({ user }: Props) {
           variant: "success",
         });
       } else {
-        console.log("error", resp.message)
+        console.log("error", resp.message);
         toast({
           title: "Error al actualizar el perfil",
           description: "Ha ocurrido un error al actualizar tu perfil",
@@ -130,6 +135,30 @@ export default function ProfileForm({ user }: Props) {
           </div>
 
           <div className="space-y-2">
+            <Label htmlFor="name">Telefono de contacto</Label>
+            <Input
+              id="name"
+              type="tel"
+              placeholder="*Telefono de contacto"
+              {...register("phone", {
+                pattern: /^[0-9]{8,14}$/,
+              })}
+              defaultValue={user?.phone || ""}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="name">Email de contacto</Label>
+            <Input
+              id="name"
+              type="email"
+              placeholder="*Email de contacto"
+              {...register("emailContact")}
+              defaultValue={user?.contact_email || ""}
+            />
+          </div>
+
+          <div className="space-y-2">
             <Label htmlFor="description">Descripcion</Label>
             <Textarea
               id="description"
@@ -139,6 +168,13 @@ export default function ProfileForm({ user }: Props) {
               defaultValue={user?.description || ""}
             />
           </div>
+
+          {errors.phone && (
+            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative text-sm">
+              {errors.phone?.type === "pattern" && "El telefono no es valido"}
+            </div>
+          )}
+
           <Button type="submit" className="w-full">
             Guardar cambios
           </Button>

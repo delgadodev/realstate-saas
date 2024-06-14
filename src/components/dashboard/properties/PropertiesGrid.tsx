@@ -13,6 +13,8 @@ import { Image as TypeImage, Property } from "@/lib/supabaseClient";
 import Link from "next/link";
 import { AlertDialoG } from "@/components/common/AlertDialog";
 import Image from "next/image";
+import { Badge } from "@/components/ui/badge";
+import { currencyToArs } from "@/lib/currencyFormat";
 
 type PropertyWithImages = Property & {
   images: TypeImage[];
@@ -51,17 +53,21 @@ export default function PropertiesGrid({ properties }: Props) {
                 />
               </TableCell>
               <TableCell>{property.title}</TableCell>
-              <TableCell>{property.price}</TableCell>
+              <TableCell>{currencyToArs(property.price ?? 0)}</TableCell>
               <TableCell>{property.description}</TableCell>
-              <TableCell className="capitalize">{property.type}</TableCell>
-              <TableCell className="flex gap-5 items-center justify-center ">
-                <Button>
-                  <Link href={`/dashboard/properties/${property.slug}`}>
-                    Editar
-                  </Link>
-                </Button>
+              <TableCell className="capitalize">
+                <Badge>{property.type}</Badge>
+              </TableCell>
+              <TableCell>
+                <div className="flex gap-2">
+                  <Button>
+                    <Link href={`/dashboard/properties/${property.slug}`}>
+                      Editar
+                    </Link>
+                  </Button>
 
-                <AlertDialoG propertyId={property.id} />
+                  <AlertDialoG propertyId={property.id} />
+                </div>
               </TableCell>
             </TableRow>
           ))}

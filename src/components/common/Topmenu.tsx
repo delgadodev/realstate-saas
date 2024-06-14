@@ -1,10 +1,17 @@
 "use client";
 import { useUIStore } from "@/store/ui-store";
 import clsx from "clsx";
-import { CiSearch, CiMenuBurger, CiChat1, CiBellOn } from "react-icons/ci";
+import {
+  CiSearch,
+  CiMenuBurger,
+  CiChat1,
+  CiBellOn,
+  CiLogout,
+} from "react-icons/ci";
 import { IoCloseOutline, IoSearchOutline } from "react-icons/io5";
 import Link from "next/link";
 import { signOut } from "next-auth/react";
+import { SidebarItem } from "./SidebarItem";
 
 interface Props {
   links: {
@@ -22,7 +29,10 @@ export const TopMenu = ({ links }: Props) => {
   return (
     <>
       <div className="sticky z-10 top-0 h-16 border-b bg-white lg:py-2.5">
-        <div className="px-6 flex items-center justify-between space-x-4">
+        <div className="px-6 flex items-center justify-between lg:justify-start space-x-4 w-full h-full">
+          <Link href="/" className="text-2xl font-bold">
+            Santiago Props
+          </Link>
           <div>
             <button
               onClick={openSideMenu}
@@ -62,28 +72,30 @@ export const TopMenu = ({ links }: Props) => {
             onClick={() => closeMenu()}
           />
 
-          <h2 className="text-2xl font-bold">Realstate</h2>
+          <h2 className="text-2xl font-bold">Santiago Props</h2>
 
           {/* Menú */}
 
           <div className="flex flex-col justify-between h-full">
             <ul className="mt-14 space-y-4">
               {links.map((item) => (
-                <div key={item.href} className="flex gap-2 items-center">
-                  {item.icon}
-                  <Link onClick={closeMenu} href={item.href}>
-                    {item.name}
-                  </Link>
+                <div key={item.href} onClick={closeMenu}>
+                  <SidebarItem
+                    href={item.href}
+                    name={item.name}
+                    icon={item.icon}
+                  />
                 </div>
               ))}
             </ul>
 
-            <div className="mb-10">
+            <div className="px-6 pt-4 border-t mb-6">
               <button
-                className="bg-blue-300 text-white p-2 rounded-md shadow"
                 onClick={() => signOut()}
+                className="px-4 py-3 flex items-center space-x-4 text-red-600 group"
               >
-                Cerrar sesión
+                <CiLogout />
+                <span className="text-red-500">Cerrar sesion</span>
               </button>
             </div>
           </div>

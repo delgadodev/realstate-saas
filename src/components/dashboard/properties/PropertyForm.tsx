@@ -334,7 +334,9 @@ export default function PropertyForm({ property, title, images }: Props) {
               </div>
 
               {images && images.length > 0 && (
-                <CarouselImages images={images} />
+                <div className="lg:w-[60%] h-[500px] p-12">
+                  <CarouselImages images={images ?? []} />
+                </div>
               )}
 
               {error && (
